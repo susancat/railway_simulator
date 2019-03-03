@@ -10,54 +10,50 @@ public class Station extends RailwaySection {
 	private TrainMover mover;
 	private Railway r;
 	int pos = 0;
+//	public Station (Railway r) {
+//		super(r);
+//	}
 	public Station (String name, int length, int capacity) {
 		super(name, length, capacity);
 	}
+
 	// make the train enter into a station or a track
 	public void enter(TrainMover mover) {
-		
-//		try {
-			for (RailwaySection s: r.railway) {
-			while (!full(pos,this)) {
-				lock.lock();
-				cond.signalAll();
-				trains.add(mover);
-				pos++;
-				lock.unlock();
+		lock.lock();
+		try {
+			while(space(pos,this) == false) {
+				cond.await();
 			}
-//		} 
-//		}catch(InterruptedException e) {
-//			e.printStackTrace();
-//		}finally {
-			
+			trains.add(mover);
+			pos++;
+		}catch(InterruptedException e) {
+
+		}finally {
+			lock.unlock();
 		}
 	}
 	
 	public void leave() {
-		
-		try {
-			for (RailwaySection s: r.railway) {
-				while (full(pos,this)) {
-					lock.lock();
-					cond.await();
-					trains.remove(mover);
-					pos --;
-					lock.unlock();
-				}
-			}
-		}catch(InterruptedException e) {
-			e.printStackTrace();
-//		}finally {
-//			
+		lock.lock();
+		while(space(pos,this) == true) {
+			cond.signalAll();
 		}
-	}
 	
-	public boolean full(int pos, RailwaySection current) {
-		boolean full;
-		if (pos<current.getCapacity()) {
-			full = false;
+		lock.unlock();
+	}
+
+	public boolean space(int pos, RailwaySection position) {
+		boolean space;
+		if (pos<position.getCapacity()) {
+			space = true;
 		}
-		else {full = true;}
-		return full;
+		else {space = false;}
+		return space;
+	}
+	public ArrayList<TrainMover> getTrains(){
+		return trains;
+	}
+	public void setTrains( ArrayList<TrainMover> trains) {
+		this.trains = trains;
 	}
 }

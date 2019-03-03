@@ -7,7 +7,18 @@ public abstract class RailwaySection {
 	private String name;
 	private int length;
 	private TrainMover mover;
-//	private ArrayList<TrainMover> trains = new ArrayList<TrainMover>();
+	private Railway r;
+	private ArrayList<TrainMover> trains = new ArrayList<TrainMover>();
+//	public String getID () {
+//		String id = null;
+//		for (int i = 0;i<trains.size();i++) {
+//			id = trains.get(i).getId();
+//		}
+//		return id;
+//	}
+//	public RailwaySection (Railway r) {
+//		this.r = r;
+//	}
 	public RailwaySection(String name, int length, int capacity) {
 	this.name = name;
 	this.length = length;
@@ -34,5 +45,13 @@ public abstract class RailwaySection {
 	}
 	public void setLength(int length) {
 		this.length = length;
+	}
+
+	public ArrayList<TrainMover> getTrains() {
+		return trains;
+	}
+
+	public void setTrains(ArrayList<TrainMover> trains) {
+		this.trains = trains;
 	}
 }

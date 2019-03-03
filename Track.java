@@ -4,83 +4,35 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 public class Track extends RailwaySection{
-	private ArrayList<TrainMover> trains = new ArrayList<TrainMover>();
 	private ReentrantLock lock = new ReentrantLock();
 	private Condition cond = lock.newCondition();
-	private TrainMover mover;
+	private TrainMover occupant = null;
 	private Railway r;
-	int pos = 0;
-	
+		
+//	public Track (Railway r) {
+//		super(r);
+//	}
 	public Track (String name, int length, int capacity) {
 		super(name,capacity,length);
 	}
-	// make the train enter into a station or a track
-//	public void enter(TrainMover occupant) {
-//		lock.lock();
-//		try {
-//			while (mover != null) {
-//				cond.await();
-//			}
-//			mover = occupant;
-//			occupant.resetDelay();
-//		} catch(InterruptedException e) {
-//			e.printStackTrace();
-//		}finally {
-//			lock.unlock();
-//		}
-//	}
-//	public void leave() {
-//		lock.lock();
-//		mover = null;
-//		cond.signalAll();
-//		lock.unlock();
-//	}
 	public void enter(TrainMover mover) {
-		
-//		try {
-			for (RailwaySection s: r.railway) {
-				
-			while (!full(pos,this)) {
-				lock.lock();
-				cond.signalAll();
-				trains.add(mover);
-				pos++;
-				lock.unlock();
-			}
-		} 
-//		}catch(InterruptedException e) {
-//			e.printStackTrace();
-//		}finally {
-			
-		}
-//	}
-	
-	public void leave() {
-		
+		lock.lock();
 		try {
-			for (RailwaySection s: r.railway) {
-				while (full(pos,this)) {
-					lock.lock();
-					cond.await();
-					trains.remove(mover);
-					pos --;
-					lock.unlock();
-				}
+			while(occupant != null) { 
+				cond.await();
 			}
+			occupant = mover;
+			mover.resetDelay();
 		}catch(InterruptedException e) {
-			e.printStackTrace();
-//		}finally {
-//			
+
+		}finally {
+			lock.unlock();
 		}
 	}
-	
-	public boolean full(int pos, RailwaySection current) {
-		boolean full;
-		if (pos<current.getCapacity()) {
-			full = false;
-		}
-		else {full = true;}
-		return full;
+	public void leave() {
+		lock.lock();
+		occupant = null;
+		cond.signalAll();
+		lock.unlock();
 	}
 }
-	
