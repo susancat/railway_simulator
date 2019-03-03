@@ -1,29 +1,32 @@
 package railway_simulator;
 
 public class Railway {
-	Station s1 = new Station("Glasgow", 3, 100);
-	Station s2 = new Station("Stirling", 2, 100);
-	Station s3 = new Station("Perth", 2, 100);
-	Station s4 = new Station("Inverness", 3, 100);
-	Track t1 = new Track("track1",1,1000);
-	Track t2 = new Track("track2",1,1000);
-	Track t3 = new Track("track3",1,1000);
-	RailwaySection[] railway = {s1,t1,s2,t2,s3,t3,s4};
-//	private int position = 0;
+//	int j;
+	private Station s1 = new Station("Glasgow", 3, 100);
+	private Station s2 = new Station("Stirling", 2, 100);
+	private Station s3 = new Station("Perth", 2, 100);
+	private Station s4 = new Station("Inverness", 3, 100);
+	private Track t1 = new Track("track",1,1000);
+	private Track t2 = new Track("track",1,1000);
+	private Track t3 = new Track("track",1,1000);
 	
-//	public Railway (int position) {
-//		for (int i = 0; i<railway.length;i++) {
-//			railway [position] = railway [i];
-//		}
-//	}
-	public Railway() {
-		
+	private RailwaySection[] railway = {s1,t1,s2,t2,s3,t3,s4};
+	public Railway(RailwaySection[] railway) {
+		this.setRailway(railway);
 	}
+	
 	public void draw() {
-		for(int i = 0; i<railway.length;i++) {
-			System.out.print("|----" + railway[i].getName() + "--" + Thread.currentThread().getName()  
-			                   + "," + Thread.currentThread().getName() + "," + Thread.currentThread().getName() 
-			                   + "----|");
+		for(int i = 0; i<getRailway().length;i++) {
+			System.out.print("|----" + getRailway()[i].getName() + "--" + Thread.currentThread().getId()+ "----|");
+//			railway[i].getTrains().toString()
 		}
+	}
+
+	public RailwaySection[] getRailway() {
+		return railway;
+	}
+
+	public void setRailway(RailwaySection[] railway) {
+		this.railway = railway;
 	}
 }

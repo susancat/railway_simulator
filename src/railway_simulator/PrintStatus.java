@@ -10,7 +10,7 @@ public class PrintStatus implements Runnable {
 	public void run() {
 		try {
 			while(true) {
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 				System.out.println(status++);
 				railway.draw();
 			}

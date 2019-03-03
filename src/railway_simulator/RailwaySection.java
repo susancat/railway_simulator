@@ -1,17 +1,24 @@
 package railway_simulator;
 
+import java.util.ArrayList;
+
 public abstract class RailwaySection {
 	private int capacity;
 	private String name;
 	private int length;
-	
-	public RailwaySection(String name, int capacity, int length) {
+	private TrainMover mover;
+	private Railway r;
+//	private ArrayList<TrainMover> trains = new ArrayList<TrainMover>();
+//	public RailwaySection (Railway r) {
+//		this.r = r;
+//	}
+	public RailwaySection(String name, int length, int capacity) {
 	this.name = name;
-	this.capacity = capacity;
 	this.length = length;
+	this.capacity = capacity;
 	}
 	
-	public abstract void enter();
+	public abstract void enter(TrainMover mover);
 	public abstract void leave();
 	
 	public int getCapacity() {
@@ -32,5 +39,4 @@ public abstract class RailwaySection {
 	public void setLength(int length) {
 		this.length = length;
 	}
-	
 }

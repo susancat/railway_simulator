@@ -1,41 +1,38 @@
 package railway_simulator;
-import java.util.ArrayList;
+
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 public class Track extends RailwaySection{
-	private ArrayList<Train> trains = new ArrayList<Train>();
 	private ReentrantLock lock = new ReentrantLock();
 	private Condition cond = lock.newCondition();
-	public Track (String name, int capacity, int length) {
+	private TrainMover occupant = null;
+	private Railway r;
+		
+//	public Track (Railway r) {
+//		super(r);
+//	}
+	public Track (String name, int length, int capacity) {
 		super(name,capacity,length);
 	}
-	
-	public void enter() {
+	public void enter(TrainMover mover) {
 		lock.lock();
 		try {
-			while (this.trains.size()>this.getCapacity()) {
-				cond.await();	
+			while(occupant != null) { 
+				cond.await();
 			}
-			}catch (InterruptedException e) {
-				e.printStackTrace();
-			}finally {
-				lock.unlock();
-			}
+			occupant = mover;
+			mover.resetDelay();
+		}catch(InterruptedException e) {
+
+		}finally {
+			lock.unlock();
 		}
-		
+	}
 	public void leave() {
 		lock.lock();
-		while (this.trains.size()<this.getCapacity()) {
-		cond.signalAll();}
+		occupant = null;
+		cond.signalAll();
 		lock.unlock();
 	}
-
-	public void setTrains(ArrayList<Train> trains) {
-		this.trains = trains;
-	}
-
-	public ArrayList<Train> getTrains() {
-		return trains;
-	}
-	
 }

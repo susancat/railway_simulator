@@ -4,41 +4,49 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
 
 public class Station extends RailwaySection {
-	private ArrayList<Train> trains = new ArrayList<Train>();
+	private ArrayList<TrainMover> trains = new ArrayList<TrainMover>();
 	private ReentrantLock lock = new ReentrantLock();
 	private Condition cond = lock.newCondition();
-	
-	public Station (String name, int capacity, int length) {
-		super(name,capacity,length);
+	private TrainMover mover;
+	private Railway r;
+	int pos = 0;
+//	public Station (Railway r) {
+//		super(r);
+//	}
+	public Station (String name, int length, int capacity) {
+		super(name, length, capacity);
 	}
 	// make the train enter into a station or a track
-	public void enter() {
+	public void enter(TrainMover mover) {
 		lock.lock();
 		try {
-			while (this.trains.size()>this.getCapacity()) {
-				cond.await();	
+			while(space(pos,this) == false) {
+				cond.await();
 			}
-			}catch (InterruptedException e) {
-				e.printStackTrace();
-			}finally {
-				lock.unlock();
-			}
+			trains.add(mover);
+			pos++;
+		}catch(InterruptedException e) {
+
+		}finally {
+			lock.unlock();
 		}
-		
+	}
+	
 	public void leave() {
 		lock.lock();
-		while (this.trains.size()<this.getCapacity()) {
-		cond.signalAll();}
+		while(space(pos,this) == true) {
+			cond.signalAll();
+		}
+	
 		lock.unlock();
 	}
 
-	public void setTrains(ArrayList<Train> trains) {
-		this.trains = trains;
+	public boolean space(int pos, RailwaySection position) {
+		boolean space;
+		if (pos<position.getCapacity()) {
+			space = true;
+		}
+		else {space = false;}
+		return space;
 	}
-
-	public ArrayList<Train> getTrains() {
-		return trains;
-	}
-	
 }
-
