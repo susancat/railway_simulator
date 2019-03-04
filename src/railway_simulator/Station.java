@@ -10,6 +10,7 @@ public class Station extends RailwaySection {
 	private TrainMover mover;
 	private Railway r;
 	int pos = 0;
+	public boolean full;
 //	public Station (Railway r) {
 //		super(r);
 //	}
@@ -20,11 +21,12 @@ public class Station extends RailwaySection {
 	public void enter(TrainMover mover) {
 		lock.lock();
 		try {
-			while(space(pos,this) == false) {
+			while(pos == this.getCapacity()) {
 				cond.await();
 			}
 			trains.add(mover);
 			pos++;
+			full = true;
 		}catch(InterruptedException e) {
 
 		}finally {
@@ -34,19 +36,15 @@ public class Station extends RailwaySection {
 	
 	public void leave() {
 		lock.lock();
-		while(space(pos,this) == true) {
-			cond.signalAll();
-		}
-	
+		trains.remove(mover);
+		full = false;
+		cond.signalAll();
 		lock.unlock();
 	}
-
-	public boolean space(int pos, RailwaySection position) {
-		boolean space;
-		if (pos<position.getCapacity()) {
-			space = true;
-		}
-		else {space = false;}
-		return space;
-	}
+//	public ArrayList<TrainMover> getTrains(){
+//		return trains;
+//	}
+//	public void setTrains( ArrayList<TrainMover> trains) {
+//		this.trains = trains;
+//	}
 }
