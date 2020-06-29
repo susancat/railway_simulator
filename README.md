@@ -1,7 +1,6 @@
+A Java program for railway simulator (multi-thread). It allows trains to move through segments of track and stations.
 # railway_simulator
 railway-simulator
-
-A Java program for railway simulator. It allows trains to move through segments of track and stations.
 
 Features:
 
